@@ -12,8 +12,8 @@ const app = express();
 
 // ✅ CORS Setup (allow frontend)
 const allowedOrigins = [
-  "https://your-frontend-domain.vercel.app",  // 👈 Replace with your live Vercel frontend URL
-  "http://localhost:5173"                      // ✅ Keep for local testing (Vite dev)
+  "authentication-gaur-tau.vercel.app",  // 👈 Replace with your live Vercel frontend URL
+//   "http://localhost:5173"                      // ✅ Keep for local testing (Vite dev)
 ];
 
 app.use(cors({
