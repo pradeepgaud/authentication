@@ -9,29 +9,31 @@ function Login() {
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // ✅ Get API URL from environment
+  const [message, setMessage] = useState(""); // ✅ State for message
+  const [error, setError] = useState(false);  // ✅ For error/success color
+
   const api = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${api}/api/auth/login`, {
-        email,
-        password,
-      });
-
-      alert("✅ " + res.data.message);
+      const res = await axios.post(`${api}/api/auth/login`, { email, password });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       setUser(res.data.user);
 
-      navigate("/home");
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || "Login failed";
-      alert("❌ " + errorMsg);
+      setMessage("✅ Login Successful!");
+      setError(false);
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);  // ✅ Redirect after 1 sec
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "❌ Invalid Email or Password";
+      setMessage(errorMsg);
+      setError(true);
     }
   };
 
@@ -41,15 +43,23 @@ function Login() {
         onSubmit={handleSubmit}
         className="bg-[#171717] p-10 rounded-xl shadow-lg w-full max-w-md sm:max-w-lg md:max-w-md"
       >
-        <h2 className="text-3xl font-bold mb-8 text-center text-[#FFFFFF]">
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">
           Login to Your Account
         </h2>
 
-        <div className="mb-6">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-white"
+        {/* ✅ Show Message if exists */}
+        {message && (
+          <div
+            className={`mb-4 text-center p-2 rounded ${
+              error ? "bg-red-500 text-white" : "bg-green-500 text-white"
+            }`}
           >
+            {message}
+          </div>
+        )}
+
+        <div className="mb-6">
+          <label htmlFor="email" className="block mb-2 text-sm font-medium text-white">
             Email
           </label>
           <input
@@ -64,10 +74,7 @@ function Login() {
         </div>
 
         <div className="mb-8">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-white"
-          >
+          <label htmlFor="password" className="block mb-2 text-sm font-medium text-white">
             Password
           </label>
           <input
