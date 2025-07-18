@@ -1,33 +1,33 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; // ✅ import context
+import { AuthContext } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useContext(AuthContext); // ✅ get setUser from context
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // ✅ Get API URL from environment
+  const api = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/login", {
+      const res = await axios.post(`${api}/api/auth/login`, {
         email,
         password,
       });
 
       alert("✅ " + res.data.message);
 
-      // ✅ Save token & user in localStorage for persistence
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // ✅ Update global context state
       setUser(res.data.user);
 
-      // ✅ Redirect to home
       navigate("/home");
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Login failed";

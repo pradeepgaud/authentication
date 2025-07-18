@@ -16,6 +16,8 @@ function Register() {
     confirmPassword: "",
   });
 
+  const api = import.meta.env.VITE_API_URL; // ✅ API from .env
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -32,7 +34,7 @@ function Register() {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/register", {
+      const res = await axios.post(`${api}/api/auth/register`, {
         fullName: formData.name,
         username: formData.username,
         phone: formData.phone,
