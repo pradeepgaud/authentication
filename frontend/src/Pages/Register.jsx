@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; // ✅ use context
+import { AuthContext } from "../context/AuthContext";
 
 function Register() {
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext); // ✅ get setUser from context
+  const { setUser } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,7 +16,10 @@ function Register() {
     confirmPassword: "",
   });
 
-  const api = import.meta.env.VITE_API_URL; // ✅ API from .env
+  const [message, setMessage] = useState(""); // ✅ for success/error message
+  const [error, setError] = useState(false); // ✅ true => error, false => success
+
+  const api = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     setFormData({
@@ -29,7 +32,8 @@ function Register() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("❌ Passwords do not match");
+      setMessage("❌ Passwords do not match");
+      setError(true);
       return;
     }
 
@@ -43,16 +47,21 @@ function Register() {
         confirmPassword: formData.confirmPassword,
       });
 
-      alert("✅ " + res.data.message);
+      setMessage(res.data.message || "✅ Registered successfully");
+      setError(false);
 
       if (res.data.user && res.data.token) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("token", res.data.token);
 
-        setUser(res.data.user); // ✅ update context state
-        navigate("/home");
+        setUser(res.data.user);
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
       } else {
-        navigate("/login"); // fallback if token/user missing
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
       }
 
       setFormData({
@@ -64,8 +73,9 @@ function Register() {
         confirmPassword: "",
       });
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "Something went wrong";
-      alert("❌ " + errorMsg);
+      const errorMsg = error.response?.data?.message || "❌ Something went wrong";
+      setMessage(errorMsg);
+      setError(true);
     }
   };
 
@@ -78,6 +88,13 @@ function Register() {
         <h2 className="text-4xl font-bold text-center text-white mb-6">
           Create Your Account
         </h2>
+
+        {/* ✅ Message Display */}
+        {message && (
+          <p className={`text-center text-sm font-medium ${error ? "text-red-400" : "text-green-400"}`}>
+            {message}
+          </p>
+        )}
 
         {[
           {
