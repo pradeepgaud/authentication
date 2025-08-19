@@ -17,10 +17,10 @@ const Navbar = () => {
 
   const menuLinks = [
     { name: "Home", to: "/home" },
-    { name: "Features", to: "/features" },
-    { name: "Pricing", to: "/pricing" },
-    { name: "Resource ▾", to: "/resources" },
-    { name: "About", to: "/about" },
+    { name: "Features", to: "/" },
+    { name: "Pricing", to: "/" },
+    { name: "Resource ▾", to: "/" },
+    { name: "About", to: "/" },
   ];
 
   return (
